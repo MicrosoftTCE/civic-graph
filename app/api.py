@@ -351,9 +351,18 @@ def update(entity, data):
         for location in locations:
             if 'id' in location and location['id']:
                 # Location exists, update.
-                oldlocation = Location.query.get(location['id'])
+                oldlocation = Location.query.get(location['id'])  # get old location from db query & replace
                 update_location(oldlocation, location)
             else:
-                update_locations(data['locations'])
+                #Save a new location
+                new_location = Location()
+                db.add(new_location)
+                db.commit()
+                #create relationship between new location and entity
+                new_location.entities=[entity]
+                update_location(new_location, location)
+
+
+    update_locations(data['locations'])
 
     db.commit()
